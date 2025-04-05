@@ -1,47 +1,62 @@
-@extends('layouts.master')
-@section('title', 'Prime Numbers')
+@extends('layouts.app')
 @section('content')
-
-<form action="{{route('products_save', $product->id)}}" method="post">
-    {{ csrf_field() }}
-    {{ csrf_field() }}
-    @foreach($errors->all() as $error)
-    <div class="alert alert-danger">
-    <strong>Error!</strong> {{$error}}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>{{ $product->id ? 'Edit Product' : 'Add New Product' }}</h2>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('products_save', $product->id) }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group mb-3">
+                            <label for="code" class="form-label">Code:</label>
+                            <input type="text" class="form-control" name="code" value="{{ old('code', $product->code) }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="name" class="form-label">Name:</label>
+                            <input type="text" class="form-control" name="name" value="{{ old('name', $product->name) }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="model" class="form-label">Model:</label>
+                            <input type="text" class="form-control" name="model" value="{{ old('model', $product->model) }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="price" class="form-label">Price:</label>
+                            <input type="number" step="0.01" class="form-control" name="price" value="{{ old('price', $product->price) }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="stock" class="form-label">Stock:</label>
+                            <input type="number" class="form-control" name="stock" value="{{ old('stock', $product->stock) }}" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="description" class="form-label">Description:</label>
+                            <textarea class="form-control" name="description" rows="3" required>{{ old('description', $product->description) }}</textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="photo" class="form-label">Product Photo:</label>
+                            @if($product->photo)
+                                <div class="mb-2">
+                                    <img src="{{ $product->photo_url }}" alt="{{ $product->name }}" class="img-thumbnail" style="max-height: 200px;">
+                                </div>
+                            @endif
+                            <input type="file" class="form-control" name="photo" accept="image/*">
+                            @if($product->photo)
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input" name="remove_photo" id="remove_photo">
+                                    <label class="form-check-label" for="remove_photo">Remove current photo</label>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save Product</button>
+                            <a href="{{ route('products_list') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    @endforeach
-    <div class="row mb-2">
-        <div class="col-6">
-            <label for="code" class="form-label">Code:</label>
-            <input type="text" class="form-control" placeholder="Code" name="code" required value="{{$product->code}}">
-        </div>
-        <div class="col-6">
-            <label for="model" class="form-label">Model:</label>
-            <input type="text" class="form-control" placeholder="Model" name="model" required value="{{$product->model}}">
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col">
-            <label for="name" class="form-label">Name:</label>
-            <input type="text" class="form-control" placeholder="Name" name="name" required value="{{$product->name}}">
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-6">
-            <label for="model" class="form-label">Price:</label>
-            <input type="numeric" class="form-control" placeholder="Price" name="price" required value="{{$product->price}}">
-        </div>
-        <div class="col-6">
-            <label for="model" class="form-label">Photo:</label>
-            <input type="text" class="form-control" placeholder="Photo" name="photo" required value="{{$product->photo}}">
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col">
-            <label for="name" class="form-label">Description:</label>
-            <textarea type="text" class="form-control" placeholder="Description" name="description" required>{{$product->description}}</textarea>
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+</div>
 @endsection

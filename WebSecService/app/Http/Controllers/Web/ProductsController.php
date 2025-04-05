@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Web;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use DB;
 
 use App\Http\Controllers\Controller;
@@ -55,10 +56,32 @@ class ProductsController extends Controller {
 	        'model' => ['required', 'string', 'max:256'],
 	        'description' => ['required', 'string', 'max:1024'],
 	        'price' => ['required', 'numeric'],
+            'photo' => ['nullable', 'image', 'max:2048'], // 2MB max
 	    ]);
 
 		$product = $product??new Product();
-		$product->fill($request->all());
+		$product->fill($request->except('photo'));
+
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($product->photo) {
+                Storage::disk('public')->delete($product->photo);
+            }
+            
+            // Store new photo
+            $path = $request->file('photo')->store('products', 'public');
+            $product->photo = $path;
+        }
+
+        // Handle photo removal
+        if ($request->has('remove_photo') && $request->remove_photo) {
+            if ($product->photo) {
+                Storage::disk('public')->delete($product->photo);
+            }
+            $product->photo = null;
+        }
+
 		$product->save();
 
 		return redirect()->route('products_list');
@@ -67,6 +90,11 @@ class ProductsController extends Controller {
 	public function delete(Request $request, Product $product) {
 
 		if(!auth()->user()->hasPermissionTo('delete_products')) abort(401);
+
+        // Delete photo if exists
+        if ($product->photo) {
+            Storage::disk('public')->delete($product->photo);
+        }
 
 		$product->delete();
 
