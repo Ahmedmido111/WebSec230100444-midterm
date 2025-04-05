@@ -5,11 +5,20 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
+        Schema::disableForeignKeyConstraints();
+        DB::table('role_has_permissions')->truncate();
+        DB::table('model_has_roles')->truncate();
+        DB::table('model_has_permissions')->truncate();
+        DB::table('permissions')->truncate();
+        Schema::enableForeignKeyConstraints();
+
         // Create permissions
         $permissions = [
             'create_products',
@@ -42,7 +51,7 @@ class PermissionSeeder extends Seeder
         $customerRole = Role::where('name', 'customer')->first();
 
         // Give all permissions to admin
-        foreach ($permissions as $permission) {
+        foreach (Permission::all() as $permission) {
             $adminRole->givePermissionTo($permission);
         }
 

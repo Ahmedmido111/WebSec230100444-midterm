@@ -7,17 +7,24 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class TestDataSeeder extends Seeder
 {
     public function run(): void
     {
+        Schema::disableForeignKeyConstraints();
+        DB::table('users')->truncate();
+        Schema::enableForeignKeyConstraints();
+
         // Create admin user
         $admin = User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
-            'credit' => 1000
+            'credit' => 0
         ]);
         $admin->assignRole('admin');
 
@@ -26,35 +33,17 @@ class TestDataSeeder extends Seeder
             'name' => 'Employee User',
             'email' => 'employee@example.com',
             'password' => Hash::make('password'),
-            'credit' => 500
+            'credit' => 0
         ]);
         $employee->assignRole('employee');
 
         // Create customer users
-        $customers = [
-            [
-                'name' => 'Customer One',
-                'email' => 'customer1@example.com',
-                'credit' => 200
-            ],
-            [
-                'name' => 'Customer Two',
-                'email' => 'customer2@example.com',
-                'credit' => 300
-            ],
-            [
-                'name' => 'Customer Three',
-                'email' => 'customer3@example.com',
-                'credit' => 150
-            ]
-        ];
-
-        foreach ($customers as $customerData) {
+        for ($i = 1; $i <= 3; $i++) {
             $customer = User::create([
-                'name' => $customerData['name'],
-                'email' => $customerData['email'],
+                'name' => "Customer {$i}",
+                'email' => "customer{$i}@example.com",
                 'password' => Hash::make('password'),
-                'credit' => $customerData['credit']
+                'credit' => 1000
             ]);
             $customer->assignRole('customer');
         }

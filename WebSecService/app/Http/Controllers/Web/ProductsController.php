@@ -41,14 +41,26 @@ class ProductsController extends Controller {
 
 	public function edit(Request $request, Product $product = null) {
 
-		if(!auth()->user()) return redirect('/');
+		if (!auth()->user()->hasRole('admin')) {
+			abort(403, 'Unauthorized action.');
+		}
 
-		$product = $product??new Product();
+		if (!$product) {
+			$product = new Product();
+		}
 
 		return view('products.edit', compact('product'));
 	}
 
 	public function save(Request $request, Product $product = null) {
+
+		if (!auth()->user()->hasRole('admin')) {
+			abort(403, 'Unauthorized action.');
+		}
+
+		if (!$product) {
+			$product = new Product();
+		}
 
 		$this->validate($request, [
 	        'code' => ['required', 'string', 'max:32'],
@@ -59,7 +71,6 @@ class ProductsController extends Controller {
             'photo' => ['nullable', 'image', 'max:2048'], // 2MB max
 	    ]);
 
-		$product = $product??new Product();
 		$product->fill($request->except('photo'));
 
         // Handle photo upload
@@ -84,12 +95,14 @@ class ProductsController extends Controller {
 
 		$product->save();
 
-		return redirect()->route('products_list');
+		return redirect()->route('products_list')->with('success', 'Product saved successfully.');
 	}
 
 	public function delete(Request $request, Product $product) {
 
-		if(!auth()->user()->hasPermissionTo('delete_products')) abort(401);
+		if (!auth()->user()->hasRole('admin')) {
+			abort(403, 'Unauthorized action.');
+		}
 
         // Delete photo if exists
         if ($product->photo) {
@@ -98,6 +111,6 @@ class ProductsController extends Controller {
 
 		$product->delete();
 
-		return redirect()->route('products_list');
+		return redirect()->route('products_list')->with('success', 'Product deleted successfully.');
 	}
 } 
