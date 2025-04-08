@@ -101,19 +101,16 @@ class UsersController extends Controller {
             abort(401);
         }
 
-        $permissions = collect();
-        if ($user->permissions) {
-            $permissions = $permissions->merge($user->permissions);
-        }
-        if ($user->roles) {
-            foreach($user->roles as $role) {
-                if ($role->permissions) {
-                    $permissions = $permissions->merge($role->permissions);
-                }
-            }
-        }
+        // Get direct permissions
+        $permissions = $user->getDirectPermissions();
+        
+        // Get permissions from roles
+        $rolePermissions = $user->getPermissionsViaRoles();
+        
+        // Merge all permissions
+        $allPermissions = $permissions->merge($rolePermissions)->unique('id');
 
-        return view('users.profile', compact('user', 'permissions'));
+        return view('users.profile', compact('user', 'allPermissions'));
     }
 
     public function edit(Request $request, User $user = null) {
