@@ -17,6 +17,7 @@ class PermissionSeeder extends Seeder
         DB::table('model_has_roles')->truncate();
         DB::table('model_has_permissions')->truncate();
         DB::table('permissions')->truncate();
+        DB::table('roles')->truncate();
         Schema::enableForeignKeyConstraints();
 
         // Create permissions
@@ -42,13 +43,17 @@ class PermissionSeeder extends Seeder
 
         // Create each permission
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission, 'guard_name' => 'web']);
+            Permission::create([
+                'name' => $permission,
+                'guard_name' => 'web',
+                'display_name' => ucwords(str_replace('_', ' ', $permission))
+            ]);
         }
 
-        // Get roles
-        $adminRole = Role::where('name', 'admin')->first();
-        $employeeRole = Role::where('name', 'employee')->first();
-        $customerRole = Role::where('name', 'customer')->first();
+        // Create roles if they don't exist
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $employeeRole = Role::firstOrCreate(['name' => 'employee', 'guard_name' => 'web']);
+        $customerRole = Role::firstOrCreate(['name' => 'customer', 'guard_name' => 'web']);
 
         // Give all permissions to admin
         foreach (Permission::all() as $permission) {
@@ -63,7 +68,8 @@ class PermissionSeeder extends Seeder
             'delete_products',
             'manage_customers',
             'view_customers',
-            'add_customer_credit'
+            'add_customer_credit',
+            'show_users'
         ]);
 
         // Give specific permissions to customer
