@@ -41,7 +41,7 @@ class ProductsController extends Controller {
 
 	public function edit(Request $request, Product $product = null) {
 
-		if (!auth()->user()->hasRole('admin')) {
+		if (!auth()->user()->hasRole('admin') && !auth()->user()->hasRole('employee')) {
 			abort(403, 'Unauthorized action.');
 		}
 
@@ -54,7 +54,7 @@ class ProductsController extends Controller {
 
 	public function save(Request $request, Product $product = null) {
 
-		if (!auth()->user()->hasRole('admin')) {
+		if (!auth()->user()->hasRole('admin') && !auth()->user()->hasRole('employee')) {
 			abort(403, 'Unauthorized action.');
 		}
 

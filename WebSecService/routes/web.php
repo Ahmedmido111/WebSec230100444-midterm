@@ -45,11 +45,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/purchases/history', [PurchaseController::class, 'history'])->name('purchases.history');
     });
 
-    // Customer credit management routes
-    Route::group(['middleware' => ['auth']], function () {
-        Route::get('/customers', [CustomerCreditController::class, 'index'])->name('customers.index');
-        Route::get('/customers/{customer}', [CustomerCreditController::class, 'show'])->name('customers.show');
-        Route::post('/customers/{customer}/add-credit', [CustomerCreditController::class, 'addCredit'])->name('customers.add-credit');
+    // Customer Management Routes
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/customers', [CustomersController::class, 'index'])->name('customers.index');
+        Route::get('/customers/{customer}', [CustomersController::class, 'show'])->name('customers.show');
+        Route::post('/customers/{customer}/add-credit', [CustomersController::class, 'addCredit'])->name('customers.add-credit');
     });
 });
 
@@ -74,11 +74,4 @@ Route::get('/prime', function () {
 
 Route::get('/test', function () {
     return view('test');
-});
-
-// Customer Management Routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/customers', [CustomersController::class, 'index'])->name('customers.index');
-    Route::get('/customers/{customer}', [CustomersController::class, 'show'])->name('customers.show');
-    Route::post('/customers/{customer}/add-credit', [CustomersController::class, 'addCredit'])->name('customers.add-credit');
 });

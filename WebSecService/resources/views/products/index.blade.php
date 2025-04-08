@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col">
-            <h2 class="text-light">Products</h2>
+            <h2>Products</h2>
         </div>
         @if(auth()->user()->hasRole('employee'))
         <div class="col text-end">
