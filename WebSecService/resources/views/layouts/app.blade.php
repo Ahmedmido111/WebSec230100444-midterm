@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm bg-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">WebSec Service</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -46,6 +46,11 @@
                             <a class="nav-link" href="{{ route('register') }}">Register</a>
                         </li>
                     @else
+                        @if(auth()->user()->hasRole('customer'))
+                            <li class="nav-item">
+                                <span class="nav-link">Credit: ${{ number_format(auth()->user()->credit, 2) }}</span>
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <form action="{{ route('do_logout') }}" method="POST" class="d-inline">
                                 @csrf

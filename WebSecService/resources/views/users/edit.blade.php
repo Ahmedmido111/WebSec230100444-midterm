@@ -38,16 +38,7 @@ $(document).ready(function(){
                     @endforeach
                 </select>
             </div>
-            <div class="col-12 mb-2">
-                <label for="model" class="form-label">Direct Permissions:</label> (<a href='#' id='clean_permissions'>reset</a>)
-                <select multiple class="form-select" id='permissions' name="permissions[]">
-                @foreach($permissions as $permission)
-                    <option value='{{$permission->name}}' {{$permission->taken?'selected':''}}>
-                        {{$permission->display_name}}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
+            
             @endcan
 
             <button type="submit" class="btn btn-primary">Submit</button>
